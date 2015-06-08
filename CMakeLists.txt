@@ -1,9 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
 
-project( POBR )
+project(POBR_TrafficT27)
 
-find_package( OpenCV REQUIRED )
-
-add_executable( POBR main.cpp )
-
-target_link_libraries( POBR ${OpenCV_LIBS} )
+add_subdirectory(src)
