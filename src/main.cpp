@@ -28,6 +28,13 @@ int main(int argc, char** argv)
 	namedWindow("Output Image", WINDOW_AUTOSIZE);
 	imshow("Output Image", findTrafficT27(image));
 
+	/*
+	namedWindow("test", WINDOW_AUTOSIZE);
+	Mat test;
+	cvtColor(image, test, CV_BGR2HSV);
+	imshow("test", test);
+	*/
+
 	waitKey(0);
     return 0;
 }
