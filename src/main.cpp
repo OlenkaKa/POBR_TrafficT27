@@ -13,8 +13,7 @@ int main(int argc, char** argv)
 		return -1;
 	}
 
-	Mat image;
-	image = imread(argv[1], CV_LOAD_IMAGE_COLOR);
+	Mat image = imread(argv[1], CV_LOAD_IMAGE_COLOR);
 
 	if(!image.data)
 	{
@@ -22,14 +21,14 @@ int main(int argc, char** argv)
 		return -1;
 	}
 
-	namedWindow("Input Image", WINDOW_AUTOSIZE);
+	namedWindow("Input Image", WINDOW_NORMAL);
 	imshow("Input Image", image);
 
-	namedWindow("Output Image", WINDOW_AUTOSIZE);
+	namedWindow("Output Image", WINDOW_NORMAL);
 	imshow("Output Image", findTrafficT27(image));
 
 	/*
-	namedWindow("test", WINDOW_AUTOSIZE);
+	namedWindow("test", WINDOW_NORMAL);
 	Mat test;
 	cvtColor(image, test, CV_BGR2HSV);
 	imshow("test", test);

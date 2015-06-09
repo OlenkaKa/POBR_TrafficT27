@@ -2,6 +2,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
+add_definitions(-std=c++11)
+
 file(GLOB files *.cpp)
 
 find_package(OpenCV REQUIRED)
