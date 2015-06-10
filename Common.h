@@ -11,6 +11,11 @@ bool isLess(const cv::Vec3b& v1, const cv::Vec3b& v2);
 
 cv::Mat selectColor(const cv::Mat& image, const cv::Vec3b& minValues, const cv::Vec3b& maxValues);
 
+//cv::Mat dilate(const cv::Mat& image, int iterations);
+//cv::Mat erode(const cv::Mat& image, int iterations);
+
+cv::Mat medianFilter(const cv::Mat& image, int iterations);
+
 template<class T>
 struct Comparator
 {

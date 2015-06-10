@@ -18,7 +18,10 @@ Mat findRedCircle(const Mat& inputImage)
 	Mat segImage = indexSegments(image);
 	namedWindow("Segments", WINDOW_NORMAL);
 	imshow("Segments", segImage);
-	cout << Object::generateObjects(segImage).size() << endl;
+
+	vector<Object> objects;
+	Object::generateObjects(segImage, objects);
+	cout << objects.size() << endl;
 
 	return image;
 }

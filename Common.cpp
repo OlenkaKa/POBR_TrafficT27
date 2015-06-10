@@ -99,3 +99,16 @@ Mat selectColor(const Mat& image_, const Vec3b& minValues, const Vec3b& maxValue
 				result(i,j) = WHITE_VEC;
 	return result;
 }
+
+Mat medianFilter(const Mat& image_, int iterations) {
+	Mat result_(image_.rows, image_.cols, CV_8UC3);
+	Mat_<Vec3b> image = image_;
+	Mat_<Vec3b> result = result_;
+	uchar values[9];
+
+	for(int i = 0; i < image.rows; ++i)
+		for(int j = 0; j < image.cols; ++j) {
+			//
+		}
+	return result;
+}
