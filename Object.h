@@ -19,7 +19,9 @@ public:
 	Object();
 	int getSize();
 	int getCircuit();
+	cv::Point getCenter();
 	double getM7();
+	double getW3();
 
 	void addPoint(int x, int y, bool circuit);
 	void extractFeatures();
@@ -40,6 +42,7 @@ private:
 	// coefficients
 	int L_;
 	double M7_;
+	double W3_;
 };
 
 #endif /* OBJECT_H_ */

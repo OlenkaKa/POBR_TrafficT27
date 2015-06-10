@@ -14,7 +14,8 @@
 using namespace cv;
 using namespace std;
 
-Object::Object(): minPoint_(0, 0), maxPoint_(INT_MAX, INT_MAX), L_(0), M7_(0) {
+Object::Object(): minPoint_(0, 0), maxPoint_(INT_MAX, INT_MAX),
+		L_(0), M7_(0), W3_(0) {
 	for(int i = 0; i < GEOMETRIC_MOMENTS; ++i)
 		for(int j = 0; j < GEOMETRIC_MOMENTS; ++j)
 			m_[i][j] = 0;
@@ -28,8 +29,16 @@ int Object::getCircuit() {
 	return L_;
 }
 
+Point Object::getCenter() {
+	return Point(m_[1][0]/m_[0][0], m_[0][1]/m_[0][0]);
+}
+
 double Object::getM7() {
 	return M7_;
+}
+
+double Object::getW3() {
+	return W3_;
 }
 
 void Object::addPoint(int x, int y, bool circuit) {
@@ -49,11 +58,16 @@ void Object::addPoint(int x, int y, bool circuit) {
 }
 
 void Object::extractFeatures() {
-	double M02, M20, M11;
+	long double M02, M20, M11;
 	M11 = m_[1][1] - m_[1][0] * m_[0][1] / m_[0][0];
 	M20 = m_[2][0] - pow(m_[1][0], 2) / m_[0][0];
 	M02 = m_[0][2] - pow(m_[0][1], 2) / m_[0][0];
+
 	M7_ = (M20 * M02 - pow(M11, 2)) / pow(m_[0][0], 4);
+	//cout << "M7: " << M7_ << endl;
+
+	W3_ = (L_ / (2 * sqrt(M_PI * m_[0][0]))) - 1;
+	//cout << "W3: " << W3_ << endl;
 }
 
 long long Object::calculateGeometricMoment(int x, int y, int i, int j) {
