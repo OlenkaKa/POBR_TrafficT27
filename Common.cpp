@@ -1,4 +1,6 @@
 #include <cmath>
+#include <algorithm>
+#include <array>
 
 #include "Common.h"
 
@@ -100,15 +102,78 @@ Mat selectColor(const Mat& image_, const Vec3b& minValues, const Vec3b& maxValue
 	return result;
 }
 
+Mat dilate(const Mat& image_, int iterations) {
+	Mat result_(image_.rows, image_.cols, CV_8UC3);
+	Mat_<Vec3b> image = image_;
+	Mat_<Vec3b> result = result_;
+
+	Mat_<Vec3b> tmp;
+	hconcat(image, image.col(0), tmp);
+	hconcat(tmp, tmp.col(tmp.cols-1), tmp);
+	vconcat(tmp, tmp.row(0), tmp);
+	vconcat(tmp, tmp.row(tmp.rows-1), tmp);
+
+	for(int iter = 0; iter < iterations; ++iter)
+		for(int i = 0; i < result.rows; ++i)
+			for(int j = 0; j < result.cols; ++j) {
+				array<Vec3b, 9> values = {tmp(i, j), tmp(i, j+1), tmp(i, j+2),
+						tmp(i+1, j), tmp(i+1, j+1), tmp(i+1, j+2),
+						tmp(i+2, j), tmp(i+2, j+1), tmp(i+2, j+2)};
+				result(i, j) = *(max_element(values.begin(), values.end(), isLess));
+			}
+	return result;
+}
+
+Mat erode(const Mat& image_, int iterations) {
+	Mat result_(image_.rows, image_.cols, CV_8UC3);
+	Mat_<Vec3b> image = image_;
+	Mat_<Vec3b> result = result_;
+
+	Mat_<Vec3b> tmp;
+	hconcat(image, image.col(0), tmp);
+	hconcat(tmp, tmp.col(tmp.cols-1), tmp);
+	vconcat(tmp, tmp.row(0), tmp);
+	vconcat(tmp, tmp.row(tmp.rows-1), tmp);
+
+	for(int iter = 0; iter < iterations; ++iter)
+		for(int i = 0; i < result.rows; ++i)
+			for(int j = 0; j < result.cols; ++j) {
+				array<Vec3b, 9> values = {tmp(i, j), tmp(i, j+1), tmp(i, j+2),
+						tmp(i+1, j), tmp(i+1, j+1), tmp(i+1, j+2),
+						tmp(i+2, j), tmp(i+2, j+1), tmp(i+2, j+2)};
+				result(i, j) = *(min_element(values.begin(), values.end(), isLess));
+			}
+	return result;
+}
+
+Mat morphologyClose(const Mat& image, int iterations) {
+	return erode(dilate(image, iterations), iterations);
+}
+
+Mat morphologyOpen(const Mat& image, int iterations) {
+	return dilate(erode(image, iterations), iterations);
+}
+
 Mat medianFilter(const Mat& image_, int iterations) {
 	Mat result_(image_.rows, image_.cols, CV_8UC3);
 	Mat_<Vec3b> image = image_;
 	Mat_<Vec3b> result = result_;
-	uchar values[9];
 
-	for(int i = 0; i < image.rows; ++i)
-		for(int j = 0; j < image.cols; ++j) {
-			//
-		}
+	Mat_<Vec3b> tmp;
+	hconcat(image, image.col(0), tmp);
+	hconcat(tmp, tmp.col(tmp.cols-1), tmp);
+	vconcat(tmp, tmp.row(0), tmp);
+	vconcat(tmp, tmp.row(tmp.rows-1), tmp);
+
+	for(int iter = 0; iter < iterations; ++iter)
+		for(int i = 1; i < tmp.rows-1; ++i)
+			for(int j = 1; j < tmp.cols-1; ++j) {
+				array<Vec3b, 9> values = {tmp(i-1, j-1), tmp(i-1, j), tmp(i-1, j+1),
+						tmp(i, j-1), tmp(i, j), tmp(i, j+1),
+						tmp(i+1, j-1), tmp(i+1, j), tmp(i+1, j+1)};
+				sort(values.begin(), values.end(), isLess);
+				result(i-1, j-1) = values[5];
+			}
+
 	return result;
 }
