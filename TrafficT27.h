@@ -3,7 +3,11 @@
 
 #include <opencv2/opencv.hpp>
 
-cv::Mat findRedCircle(const cv::Mat& image);
+#include "Object.h"
+#include "Parameters.h"
+
+void findElement(const cv::Mat& image, std::vector<Object>& objects, const Parameters& params);
+
 cv::Mat findTrafficT27(const cv::Mat& image);
 
 #endif /* TRAFFICT27_H_ */

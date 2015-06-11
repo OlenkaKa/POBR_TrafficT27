@@ -68,6 +68,8 @@ void Object::extractFeatures() {
 
 	W3_ = (L_ / (2 * sqrt(M_PI * m_[0][0]))) - 1;
 	//cout << "W3: " << W3_ << endl;
+
+	cout << getSize() << endl;
 }
 
 long long Object::calculateGeometricMoment(int x, int y, int i, int j) {
