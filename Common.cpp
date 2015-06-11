@@ -42,22 +42,6 @@ void convertHSV(const Mat& image_)
 		}
 }
 
-bool isLess(const Vec3b& v1, const Vec3b& v2)
-{
-	if(v1[0] < v2[0])
-		return true;
-	if(v1[0] > v2[0])
-		return false;
-	if(v1[1] < v2[1])
-		return true;
-	if(v1[1] > v2[1])
-		return false;
-	if(v1[2] < v2[2])
-		return true;
-	return false;
-}
-
-
 bool checkLessMin(uchar min, uchar max, uchar value)
 {
 	if(value >= min && value <= max)
@@ -73,9 +57,9 @@ bool checkLessMax(uchar min, uchar max, uchar value)
 
 Mat selectColor(const Mat& image_, const Vec3b& minValues, const Vec3b& maxValues)
 {
-	Mat result_(image_.rows, image_.cols, CV_8UC3);
+	Mat result_ = Mat::zeros(image_.rows, image_.cols, CV_8UC1);
 	Mat_<Vec3b> image = image_;
-	Mat_<Vec3b> result = result_;
+	Mat_<uchar> result = result_;
 	bool(*check0)(uchar, uchar, uchar);
 	bool(*check1)(uchar, uchar, uchar);
 	bool(*check2)(uchar, uchar, uchar);
@@ -98,23 +82,23 @@ Mat selectColor(const Mat& image_, const Vec3b& minValues, const Vec3b& maxValue
 			if(check0(minValues[0], maxValues[0], image(i,j)[0]) &&
 					check1(minValues[1], maxValues[1], image(i,j)[1]) &&
 					check2(minValues[2], maxValues[2], image(i,j)[2]))
-				result(i,j) = WHITE_VEC;
+				result(i,j) = 255;
 	return result;
 }
 
 Mat dilate(const Mat& image_, int iterations) {
-	Mat result_(image_.rows, image_.cols, CV_8UC3);
-	Mat_<Vec3b> image = image_;
-	Mat_<Vec3b> result = result_;
-	Mat_<Vec3b> tmp = image;
+	Mat result_ = Mat::zeros(image_.rows, image_.cols, CV_8UC1);
+	Mat_<uchar> image = image_;
+	Mat_<uchar> result = result_;
+	Mat_<uchar> tmp = image;
 
 	for(int iter = 0; iter < iterations; ++iter) {
 		for(int i = 1; i < result.rows-1; ++i) {
 			for(int j = 1; j < result.cols-1; ++j) {
-				array<Vec3b, 9> values = {tmp(i-1, j-1), tmp(i-1, j), tmp(i-1, j+1),
+				array<uchar, 9> values = {tmp(i-1, j-1), tmp(i-1, j), tmp(i-1, j+1),
 						tmp(i, j-1), tmp(i, j), tmp(i, j+1),
 						tmp(i+1, j-1), tmp(i+1, j), tmp(i+1, j+1)};
-				result(i, j) = *(max_element(values.begin(), values.end(), isLess));
+				result(i, j) = *(max_element(values.begin(), values.end()));
 			}
 		}
 		tmp = result.clone();
@@ -123,18 +107,18 @@ Mat dilate(const Mat& image_, int iterations) {
 }
 
 Mat erode(const Mat& image_, int iterations) {
-	Mat result_(image_.rows, image_.cols, CV_8UC3);
-	Mat_<Vec3b> image = image_;
-	Mat_<Vec3b> result = result_;
-	Mat_<Vec3b> tmp = image;
+	Mat result_ = Mat::zeros(image_.rows, image_.cols, CV_8UC1);
+	Mat_<uchar> image = image_;
+	Mat_<uchar> result = result_;
+	Mat_<uchar> tmp = image;
 
 	for(int iter = 0; iter < iterations; ++iter) {
 		for(int i = 1; i < result.rows-1; ++i) {
 			for(int j = 1; j < result.cols-1; ++j) {
-				array<Vec3b, 9> values = {tmp(i-1, j-1), tmp(i-1, j), tmp(i-1, j+1),
+				array<uchar, 9> values = {tmp(i-1, j-1), tmp(i-1, j), tmp(i-1, j+1),
 						tmp(i, j-1), tmp(i, j), tmp(i, j+1),
 						tmp(i+1, j-1), tmp(i+1, j), tmp(i+1, j+1)};
-				result(i, j) = *(min_element(values.begin(), values.end(), isLess));
+				result(i, j) = *(min_element(values.begin(), values.end()));
 			}
 		}
 		tmp = result.clone();
@@ -162,7 +146,7 @@ Mat medianFilter(const Mat& image_, int iterations) {
 				array<Vec3b, 9> values = {tmp(i-1, j-1), tmp(i-1, j), tmp(i-1, j+1),
 						tmp(i, j-1), tmp(i, j), tmp(i, j+1),
 						tmp(i+1, j-1), tmp(i+1, j), tmp(i+1, j+1)};
-				sort(values.begin(), values.end(), isLess);
+				sort(values.begin(), values.end(), isLess<Vec3b>);
 				result(i, j) =  values[5];
 			}
 		}

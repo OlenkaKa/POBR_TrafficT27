@@ -9,7 +9,6 @@
 #define OBJECT_H_
 
 #include <opencv2/opencv.hpp>
-#include <vector>
 
 const int GEOMETRIC_MOMENTS = 3;
 
@@ -18,19 +17,24 @@ class Object
 public:
 	Object();
 
-	int getSize();
-	int getCircuit();
-	cv::Point getCenter();
-	double getM7();
-	double getW3();
+	int getSize() const;
+	int getCircuit() const;
+	double getM1() const;
+	double getM7() const;
+	double getW3() const;
+	cv::Point getCenter() const;
+	cv::Point getMinPoint() const;
+	cv::Point getMaxPoint() const;
 
 	void addPoint(int x, int y, bool circuit);
 	void extractFeatures();
 
-	void drawOnImage(cv::Mat& image);
+	void drawOnImage(cv::Mat& image, const cv::Scalar& color);
 
 	static void generateObjects(const cv::Mat& image, std::vector<Object>& objects,
 			int minSize = 0, int maxSize = INT_MAX);
+
+	friend std::ostream& operator<< (std::ostream& os, const Object& obj);
 
 private:
 	long long calculateGeometricMoment(int i, int j, int powI, int powJ);
@@ -44,6 +48,7 @@ private:
 
 	// coefficients
 	int L_;
+	double M1_;
 	double M7_;
 	double W3_;
 };

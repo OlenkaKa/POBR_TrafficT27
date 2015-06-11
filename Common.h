@@ -6,9 +6,22 @@
 const cv::Vec3b BLACK_VEC(0, 0, 0);
 const cv::Vec3b WHITE_VEC(255, 255, 255);
 
-void convertHSV(const cv::Mat& image);
-bool isLess(const cv::Vec3b& v1, const cv::Vec3b& v2);
+template<typename T>
+bool isLess(const T& v1, const T& v2) {
+	if(v1[0] < v2[0])
+		return true;
+	if(v1[0] > v2[0])
+		return false;
+	if(v1[1] < v2[1])
+		return true;
+	if(v1[1] > v2[1])
+		return false;
+	if(v1[2] < v2[2])
+		return true;
+	return false;
+}
 
+void convertHSV(const cv::Mat& image);
 cv::Mat selectColor(const cv::Mat& image, const cv::Vec3b& minValues, const cv::Vec3b& maxValues);
 
 cv::Mat dilate(const cv::Mat& image, int iterations);
@@ -22,7 +35,7 @@ template<class T>
 struct Comparator
 {
 	bool operator() (T a, T b) {
-		return isLess(a, b);
+		return isLess<T>(a, b);
 	}
 };
 

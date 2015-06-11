@@ -15,30 +15,42 @@ using namespace cv;
 using namespace std;
 
 Object::Object(): minPoint_(INT_MAX, INT_MAX), maxPoint_(0, 0),
-		L_(0), M7_(0), W3_(0) {
+		L_(0), M1_(0), M7_(0), W3_(0) {
 	for(int i = 0; i < GEOMETRIC_MOMENTS; ++i)
 		for(int j = 0; j < GEOMETRIC_MOMENTS; ++j)
 			m_[i][j] = 0;
 }
 
-int Object::getSize() {
+int Object::getSize() const {
 	return m_[0][0];
 }
 
-int Object::getCircuit() {
+int Object::getCircuit() const {
 	return L_;
 }
 
-Point Object::getCenter() {
-	return Point(m_[1][0]/m_[0][0], m_[0][1]/m_[0][0]);
+double Object::getM1() const {
+	return M1_;
 }
 
-double Object::getM7() {
+double Object::getM7() const {
 	return M7_;
 }
 
-double Object::getW3() {
+double Object::getW3() const {
 	return W3_;
+}
+
+Point Object::getCenter() const {
+	return Point(m_[1][0]/m_[0][0], m_[0][1]/m_[0][0]);
+}
+
+Point Object::getMinPoint() const {
+	return minPoint_;
+}
+
+Point Object::getMaxPoint() const {
+	return maxPoint_;
 }
 
 void Object::addPoint(int x, int y, bool circuit) {
@@ -63,20 +75,14 @@ void Object::extractFeatures() {
 	M20 = m_[2][0] - pow(m_[1][0], 2) / m_[0][0];
 	M02 = m_[0][2] - pow(m_[0][1], 2) / m_[0][0];
 
+	M1_ = (M20 + M02) / pow(m_[0][0], 2);
 	M7_ = (M20 * M02 - pow(M11, 2)) / pow(m_[0][0], 4);
 
 	W3_ = (L_ / (2 * sqrt(M_PI * m_[0][0]))) - 1;
-
-	cout << "--- New object ---" <<endl;
-	cout << "M7: " << M7_ << endl;
-	cout << "W3: " << W3_ << endl;
-	cout << "Size: " << getSize() << endl;
-	cout << "minPoint: " << minPoint_ << endl;
-	cout << "maxPoint: " << maxPoint_ << endl;
 }
 
-void Object::drawOnImage(cv::Mat& image) {
-	rectangle(image, minPoint_, maxPoint_, Scalar(0, 0, 255), 2);
+void Object::drawOnImage(cv::Mat& image, const cv::Scalar& color) {
+	rectangle(image, minPoint_, maxPoint_, color, 2.5);
 }
 
 long long Object::calculateGeometricMoment(int x, int y, int i, int j) {
@@ -85,21 +91,21 @@ long long Object::calculateGeometricMoment(int x, int y, int i, int j) {
 
 void Object::generateObjects(const cv::Mat& image_, vector<Object>& objects, int minSize, int maxSize) {
 	map<Label, Object, Comparator<Label> > map;
-	Mat_<Vec3b> image = image_;
+	Mat_<Label> image = image_;
 	Label lab;
 
 	for(int i = 1; i < image.rows-1; ++i)
 		for(int j = 1; j < image.cols-1; ++j) {
-			lab = getLabel(image(i, j));
+			lab = image(i, j);
 
 			if(lab != BACKGROUND) {
 				if(map.find(lab) == map.end())
 					map[lab] = Object();
 
-				if(getLabel(image(i-1,j-1)) != lab || getLabel(image(i-1,j)) != lab ||
-						getLabel(image(i-1,j+1)) != lab || getLabel(image(i,j-1)) != lab ||
-						getLabel(image(i,j+1)) != lab || getLabel(image(i+1,j-1)) != lab ||
-						getLabel(image(i+1,j)) != lab || getLabel(image(i+1,j+1)) != lab)
+				if(image(i-1,j-1) != lab || image(i-1,j) != lab ||
+						image(i-1,j+1) != lab || image(i,j-1) != lab ||
+						image(i,j+1) != lab || image(i+1,j-1) != lab ||
+						image(i+1,j) != lab || image(i+1,j+1) != lab)
 					map[lab].addPoint(j, i, true);
 				else
 					map[lab].addPoint(j, i, false);
@@ -114,4 +120,17 @@ void Object::generateObjects(const cv::Mat& image_, vector<Object>& objects, int
 			objects.push_back(*obj);
 		}
 	}
+}
+
+ostream& operator<< (ostream& os, const Object& obj) {
+	os << "    --- Object ---" << endl
+			<< "    M1: " << obj.getM1() << endl
+			<< "    M7: " << obj.getM7() << endl
+			<< "    W3: " << obj.getW3() << endl
+			<< "    Size: " << obj.getSize() << endl
+			<< "    Circuit: " << obj.getCircuit() << endl
+			<< "    Center: " << obj.getCenter() << endl
+			<< "    Min point: " << obj.getMinPoint() << endl
+			<< "    Max point: " << obj.getMaxPoint();
+	return os;
 }

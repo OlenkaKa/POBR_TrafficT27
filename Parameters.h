@@ -12,14 +12,21 @@
 
 struct ShapeParameters
 {
-	double minW3;
-	double maxW3;
+	double minM1;
+	double maxM1;
 
 	double minM7;
 	double maxM7;
 
-	ShapeParameters(double minW3_, double maxW3_, double minM7_, double maxM7_):
-		minW3(minW3_), maxW3(maxW3_), minM7(minM7_), maxM7(maxM7_) {
+	double minW3;
+	double maxW3;
+
+	ShapeParameters(double minM1_, double maxM1_,
+			double minM7_, double maxM7_,
+			double minW3_, double maxW3_):
+		minM1(minM1_), maxM1(maxM1_),
+		minM7(minM7_), maxM7(maxM7_),
+		minW3(minW3_), maxW3(maxW3_) {
 	}
 };
 
@@ -32,11 +39,15 @@ struct Parameters {
 	ShapeParameters shapeParams;
 
 	Parameters(cv::Vec3f minHSV_, cv::Vec3f maxHSV_,
-			int morphologyIter_, int minSegmentSize_, int maxSegmentSize_,
-			double minW3_, double maxW3_, double minM7_, double maxM7_):
+			int morphologyIter_,
+			int minSegmentSize_, int maxSegmentSize_,
+			double minM1_, double maxM1_,
+			double minM7_, double maxM7_,
+			double minW3_, double maxW3_):
 		minHSV(minHSV_), maxHSV(maxHSV_),
-		morphologyIter(morphologyIter_), minSegmentSize(minSegmentSize_), maxSegmentSize(maxSegmentSize_),
-		shapeParams(minW3_, maxW3_, minM7_, maxM7_) {
+		morphologyIter(morphologyIter_),
+		minSegmentSize(minSegmentSize_), maxSegmentSize(maxSegmentSize_),
+		shapeParams(minM1_, maxM1_, minM7_, maxM7_, minW3_, maxW3_) {
 	}
 };
 
