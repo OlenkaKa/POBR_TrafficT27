@@ -17,6 +17,26 @@ void findElement(const cv::Mat& inputImage, std::vector<Object>& objects, const 
 
 	Mat segImage = indexSegments(image);
 	Object::generateObjects(segImage, objects, params.minSegmentSize, params.maxSegmentSize);
+
+	filterObjects(objects, params.shapeParams);
+}
+
+void filterObjects(vector<Object>& objects, const ShapeParameters& params) {
+	double W3, M7;
+	auto it = objects.begin();
+	auto nextIt = it;	++nextIt;
+	auto endIt = objects.end();
+
+	while(it != endIt) {
+		W3 = (*it).getW3();
+		M7 = (*it).getM7();
+		if(W3 < params.minW3 || W3 > params.maxW3 ||
+				M7 < params.minM7 || M7 > params.maxM7) {
+			objects.erase(it);
+		}
+		it = nextIt;
+		++nextIt;
+	}
 }
 
 Mat findTrafficT27(const Mat& inputImage)
@@ -26,28 +46,16 @@ Mat findTrafficT27(const Mat& inputImage)
 
 	vector<Object> backObj, circleObj, girlObj, stickObj;
 
-	Parameters backParams(
-			BACKGROUND_HSV_MIN_VALUE, BACKGROUND_HSV_MAX_VALUE,
-			BACKGROUND_MIN_SEGMENT_SIZE, BACKGROUND_MAX_SEGMENT_SIZE);
-
-	Parameters circleParams(
-			CIRCLE_HSV_MIN_VALUE, CIRCLE_HSV_MAX_VALUE,
-			CIRCLE_MIN_SEGMENT_SIZE, CIRCLE_MAX_SEGMENT_SIZE);
-
-	Parameters girlParams(
-			GIRL_HSV_MIN_VALUE, GIRL_HSV_MAX_VALUE,
-			GIRL_MIN_SEGMENT_SIZE, GIRL_MAX_SEGMENT_SIZE);
-
-	Parameters stickParams(
-			STICK_HSV_MIN_VALUE, STICK_HSV_MAX_VALUE,
-			STICK_MIN_SEGMENT_SIZE, STICK_MAX_SEGMENT_SIZE);
-
-	//findElement(image, backObj, backParams);
-	findElement(image, circleObj, circleParams);
-	//findElement(image, girlObj, girlParams);
-	//findElement(image, stickObj, stickParams);
+	//findElement(image, backObj, BACKGROUND_PARAMS);
+	//findElement(image, circleObj, CIRCLE_PARAMS);
+	//findElement(image, girlObj, GIRL_PARAMS);
+	//findElement(image, stickObj, STICK_PARAMS);
 
 	// TODO: merge objects
 
-	return selectColor(image, CIRCLE_HSV_MIN_VALUE, CIRCLE_HSV_MAX_VALUE);
+	Mat outputImage = selectColor(image, CIRCLE_PARAMS.minHSV, CIRCLE_PARAMS.maxHSV);
+	for(auto it = circleObj.begin(); it != circleObj.end(); ++it)
+		(*it).drawOnImage(outputImage);
+
+	return outputImage;
 }

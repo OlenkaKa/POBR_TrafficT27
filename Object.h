@@ -17,6 +17,7 @@ class Object
 {
 public:
 	Object();
+
 	int getSize();
 	int getCircuit();
 	cv::Point getCenter();
@@ -25,6 +26,8 @@ public:
 
 	void addPoint(int x, int y, bool circuit);
 	void extractFeatures();
+
+	void drawOnImage(cv::Mat& image);
 
 	static void generateObjects(const cv::Mat& image, std::vector<Object>& objects,
 			int minSize = 0, int maxSize = INT_MAX);

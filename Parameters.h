@@ -10,14 +10,30 @@
 
 #include <opencv2/opencv.hpp>
 
+struct ShapeParameters
+{
+	double minW3;
+	double maxW3;
+
+	double minM7;
+	double maxM7;
+
+	ShapeParameters(double minW3_, double maxW3_, double minM7_, double maxM7_):
+		minW3(minW3_), maxW3(maxW3_), minM7(minM7_), maxM7(maxM7_) {
+	}
+};
+
 struct Parameters {
 	cv::Vec3f minHSV;
 	cv::Vec3f maxHSV;
 	int minSegmentSize;
 	int maxSegmentSize;
+	ShapeParameters shapeParams;
 
-	Parameters(cv::Vec3f minHSV_, cv::Vec3f maxHSV_, int minSegmentSize_, int maxSegmentSize_):
-		minHSV(minHSV_), maxHSV(maxHSV_), minSegmentSize(minSegmentSize_), maxSegmentSize(maxSegmentSize_) {
+	Parameters(cv::Vec3f minHSV_, cv::Vec3f maxHSV_, int minSegmentSize_, int maxSegmentSize_,
+			double minW3_, double maxW3_, double minM7_, double maxM7_):
+		minHSV(minHSV_), maxHSV(maxHSV_), minSegmentSize(minSegmentSize_), maxSegmentSize(maxSegmentSize_),
+		shapeParams(minW3_, maxW3_, minM7_, maxM7_) {
 	}
 };
 

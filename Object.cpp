@@ -14,7 +14,7 @@
 using namespace cv;
 using namespace std;
 
-Object::Object(): minPoint_(0, 0), maxPoint_(INT_MAX, INT_MAX),
+Object::Object(): minPoint_(INT_MAX, INT_MAX), maxPoint_(0, 0),
 		L_(0), M7_(0), W3_(0) {
 	for(int i = 0; i < GEOMETRIC_MOMENTS; ++i)
 		for(int j = 0; j < GEOMETRIC_MOMENTS; ++j)
@@ -48,7 +48,7 @@ void Object::addPoint(int x, int y, bool circuit) {
 		minPoint_.x = x;
 	if(y > maxPoint_.y)
 		maxPoint_.y = y;
-	if(x < minPoint_.y)
+	if(y < minPoint_.y)
 		minPoint_.y = y;
 	if(circuit) ++L_;
 
@@ -64,12 +64,19 @@ void Object::extractFeatures() {
 	M02 = m_[0][2] - pow(m_[0][1], 2) / m_[0][0];
 
 	M7_ = (M20 * M02 - pow(M11, 2)) / pow(m_[0][0], 4);
-	//cout << "M7: " << M7_ << endl;
 
 	W3_ = (L_ / (2 * sqrt(M_PI * m_[0][0]))) - 1;
-	//cout << "W3: " << W3_ << endl;
 
-	cout << getSize() << endl;
+	cout << "--- New object ---" <<endl;
+	cout << "M7: " << M7_ << endl;
+	cout << "W3: " << W3_ << endl;
+	cout << "Size: " << getSize() << endl;
+	cout << "minPoint: " << minPoint_ << endl;
+	cout << "maxPoint: " << maxPoint_ << endl;
+}
+
+void Object::drawOnImage(cv::Mat& image) {
+	rectangle(image, minPoint_, maxPoint_, Scalar(0, 0, 255), 2);
 }
 
 long long Object::calculateGeometricMoment(int x, int y, int i, int j) {
