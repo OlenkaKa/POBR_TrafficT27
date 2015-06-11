@@ -11,9 +11,8 @@ using namespace std;
 void findElement(const cv::Mat& inputImage, std::vector<Object>& objects, const Parameters& params)
 {
 	Mat image = selectColor(inputImage, params.minHSV, params.maxHSV);
-	// TODO remove!!!
-	cv::morphologyEx(image, image, MORPH_OPEN, cv::Mat(), Point(-1, -1), 3);
-	cv::morphologyEx(image, image, MORPH_CLOSE, cv::Mat(), Point(-1, -1), 3);
+	image = morphologyOpen(image, params.morphologyIter);
+	image = morphologyClose(image, params.morphologyIter);
 
 	Mat segImage = indexSegments(image);
 	Object::generateObjects(segImage, objects, params.minSegmentSize, params.maxSegmentSize);
@@ -41,20 +40,30 @@ void filterObjects(vector<Object>& objects, const ShapeParameters& params) {
 
 Mat findTrafficT27(const Mat& inputImage)
 {
+	cout << "Recognition starting...\n";
 	Mat image = inputImage.clone();
 	convertHSV(image);
 
 	vector<Object> backObj, circleObj, girlObj, stickObj;
 
-	//findElement(image, backObj, BACKGROUND_PARAMS);
+	cout << "Finding yellow backgrounds...\n";
+	findElement(image, backObj, BACKGROUND_PARAMS);
+
+	cout << "Finding red circles...\n";
 	//findElement(image, circleObj, CIRCLE_PARAMS);
+
+	cout << "Finding black girls...\n";
 	//findElement(image, girlObj, GIRL_PARAMS);
+
+	cout << "Finding white elements...\n";
 	//findElement(image, stickObj, STICK_PARAMS);
 
+	cout << "Merging results...\n";
 	// TODO: merge objects
 
-	Mat outputImage = selectColor(image, CIRCLE_PARAMS.minHSV, CIRCLE_PARAMS.maxHSV);
-	for(auto it = circleObj.begin(); it != circleObj.end(); ++it)
+	cout << "Drawing results...\n";
+	Mat outputImage = selectColor(image, BACKGROUND_PARAMS.minHSV, BACKGROUND_PARAMS.maxHSV);
+	for(auto it = backObj.begin(); it != backObj.end(); ++it)
 		(*it).drawOnImage(outputImage);
 
 	return outputImage;

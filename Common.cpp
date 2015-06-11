@@ -106,21 +106,19 @@ Mat dilate(const Mat& image_, int iterations) {
 	Mat result_(image_.rows, image_.cols, CV_8UC3);
 	Mat_<Vec3b> image = image_;
 	Mat_<Vec3b> result = result_;
+	Mat_<Vec3b> tmp = image;
 
-	Mat_<Vec3b> tmp;
-	hconcat(image, image.col(0), tmp);
-	hconcat(tmp, tmp.col(tmp.cols-1), tmp);
-	vconcat(tmp, tmp.row(0), tmp);
-	vconcat(tmp, tmp.row(tmp.rows-1), tmp);
-
-	for(int iter = 0; iter < iterations; ++iter)
-		for(int i = 0; i < result.rows; ++i)
-			for(int j = 0; j < result.cols; ++j) {
-				array<Vec3b, 9> values = {tmp(i, j), tmp(i, j+1), tmp(i, j+2),
-						tmp(i+1, j), tmp(i+1, j+1), tmp(i+1, j+2),
-						tmp(i+2, j), tmp(i+2, j+1), tmp(i+2, j+2)};
+	for(int iter = 0; iter < iterations; ++iter) {
+		for(int i = 1; i < result.rows-1; ++i) {
+			for(int j = 1; j < result.cols-1; ++j) {
+				array<Vec3b, 9> values = {tmp(i-1, j-1), tmp(i-1, j), tmp(i-1, j+1),
+						tmp(i, j-1), tmp(i, j), tmp(i, j+1),
+						tmp(i+1, j-1), tmp(i+1, j), tmp(i+1, j+1)};
 				result(i, j) = *(max_element(values.begin(), values.end(), isLess));
 			}
+		}
+		tmp = result.clone();
+	}
 	return result;
 }
 
@@ -128,21 +126,19 @@ Mat erode(const Mat& image_, int iterations) {
 	Mat result_(image_.rows, image_.cols, CV_8UC3);
 	Mat_<Vec3b> image = image_;
 	Mat_<Vec3b> result = result_;
+	Mat_<Vec3b> tmp = image;
 
-	Mat_<Vec3b> tmp;
-	hconcat(image, image.col(0), tmp);
-	hconcat(tmp, tmp.col(tmp.cols-1), tmp);
-	vconcat(tmp, tmp.row(0), tmp);
-	vconcat(tmp, tmp.row(tmp.rows-1), tmp);
-
-	for(int iter = 0; iter < iterations; ++iter)
-		for(int i = 0; i < result.rows; ++i)
-			for(int j = 0; j < result.cols; ++j) {
-				array<Vec3b, 9> values = {tmp(i, j), tmp(i, j+1), tmp(i, j+2),
-						tmp(i+1, j), tmp(i+1, j+1), tmp(i+1, j+2),
-						tmp(i+2, j), tmp(i+2, j+1), tmp(i+2, j+2)};
+	for(int iter = 0; iter < iterations; ++iter) {
+		for(int i = 1; i < result.rows-1; ++i) {
+			for(int j = 1; j < result.cols-1; ++j) {
+				array<Vec3b, 9> values = {tmp(i-1, j-1), tmp(i-1, j), tmp(i-1, j+1),
+						tmp(i, j-1), tmp(i, j), tmp(i, j+1),
+						tmp(i+1, j-1), tmp(i+1, j), tmp(i+1, j+1)};
 				result(i, j) = *(min_element(values.begin(), values.end(), isLess));
 			}
+		}
+		tmp = result.clone();
+	}
 	return result;
 }
 
@@ -158,22 +154,19 @@ Mat medianFilter(const Mat& image_, int iterations) {
 	Mat result_(image_.rows, image_.cols, CV_8UC3);
 	Mat_<Vec3b> image = image_;
 	Mat_<Vec3b> result = result_;
+	Mat_<Vec3b> tmp = image;
 
-	Mat_<Vec3b> tmp;
-	hconcat(image, image.col(0), tmp);
-	hconcat(tmp, tmp.col(tmp.cols-1), tmp);
-	vconcat(tmp, tmp.row(0), tmp);
-	vconcat(tmp, tmp.row(tmp.rows-1), tmp);
-
-	for(int iter = 0; iter < iterations; ++iter)
-		for(int i = 1; i < tmp.rows-1; ++i)
-			for(int j = 1; j < tmp.cols-1; ++j) {
+	for(int iter = 0; iter < iterations; ++iter) {
+		for(int i = 1; i < result.rows-1; ++i) {
+			for(int j = 1; j < result.cols-1; ++j) {
 				array<Vec3b, 9> values = {tmp(i-1, j-1), tmp(i-1, j), tmp(i-1, j+1),
 						tmp(i, j-1), tmp(i, j), tmp(i, j+1),
 						tmp(i+1, j-1), tmp(i+1, j), tmp(i+1, j+1)};
 				sort(values.begin(), values.end(), isLess);
-				result(i-1, j-1) = values[5];
+				result(i, j) =  values[5];
 			}
-
+		}
+		tmp = result.clone();
+	}
 	return result;
 }
