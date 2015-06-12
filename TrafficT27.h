@@ -6,10 +6,10 @@
 #include "Object.h"
 #include "Parameters.h"
 
-void findElement(const cv::Mat& image, std::vector<Object>& objects, const Parameters& params);
-void filterObjects(std::vector<Object>& objects, const ShapeParameters& params);
-void mergeAllObjects(std::vector<Object>& back, std::vector<Object>& circle,
-		std::vector<Object>& girl, std::vector<Object>& stick, std::vector<Object>& result);
+void findElement(const cv::Mat& image, std::list<Object>& objects, const Parameters& params);
+void filterObjects(std::list<Object>& objects, const ShapeParameters& params);
+void mergeAllObjects(std::list<Object>& back, std::list<Object>& circle,
+		std::list<Object>& girl, std::list<Object>& stick, std::list<Object>& result);
 bool canMergeObjects(const Object& o1, const Object& o2, const RelationParameters& params);
 
 cv::Mat findTrafficT27(const cv::Mat& image);

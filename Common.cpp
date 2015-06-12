@@ -87,7 +87,7 @@ Mat selectColor(const Mat& image_, const Vec3b& minValues, const Vec3b& maxValue
 }
 
 Mat dilate(const Mat& image_, int iterations) {
-	Mat result_ = Mat::zeros(image_.rows, image_.cols, CV_8UC1);
+	Mat result_ = image_.clone();
 	Mat_<uchar> image = image_;
 	Mat_<uchar> result = result_;
 	Mat_<uchar> tmp = image;
@@ -107,7 +107,7 @@ Mat dilate(const Mat& image_, int iterations) {
 }
 
 Mat erode(const Mat& image_, int iterations) {
-	Mat result_ = Mat::zeros(image_.rows, image_.cols, CV_8UC1);
+	Mat result_ = image_.clone();
 	Mat_<uchar> image = image_;
 	Mat_<uchar> result = result_;
 	Mat_<uchar> tmp = image;
@@ -138,22 +138,25 @@ Mat sharpenFilter(const Mat& image_, int iterations) {
 	Mat result_(image_.rows, image_.cols, CV_8UC3);
 	Mat_<Vec3b> image = image_;
 	Mat_<Vec3b> result = result_;
-	Mat_<Vec3b> tmp = image;
+	Mat_<Vec3b> tmp = image_;
 	static const double kernel[9] = {0, -0.5, 0, -0.5, 3, -0.5, 0, -0.5, 0};
+	//static const double kernel[9] = {-1, -1, -1, -1, 9, -1, -1, -1, -1};
 
 	for(int iter = 0; iter < iterations; ++iter) {
 		for(int i = 1; i < result.rows-1; ++i) {
 			for(int j = 1; j < result.cols-1; ++j) {
-				result(i, j) =  tmp(i-1, j-1) * kernel[0] + tmp(i-1, j) * kernel[1] +
-						tmp(i-1, j+1) * kernel[2] + tmp(i, j-1) * kernel[3] +
-						tmp(i, j) * kernel[4] + tmp(i, j+1) * kernel[5] +
-						tmp(i+1, j-1) * kernel[6] + tmp(i+1, j) * kernel[7] +
-						tmp(i+1, j+1) * kernel[8];
-				for(int k = 0; k < 3; ++k)
-					if(result(i, j)[k] < 0)
-						result(i, j)[k] = 0;
-					else if (result(i, j)[k] > 255)
-						result(i, j)[k] = 255;
+				for(int k = 0; k < 3; ++k) {
+					int temp_result =  tmp(i-1, j-1)[k] * kernel[0] + tmp(i-1, j)[k] * kernel[1] +
+							tmp(i-1, j+1)[k] * kernel[2] + tmp(i, j-1)[k] * kernel[3] +
+							tmp(i, j)[k] * kernel[4] + tmp(i, j+1)[k] * kernel[5] +
+							tmp(i+1, j-1)[k] * kernel[6] + tmp(i+1, j)[k] * kernel[7] +
+							tmp(i+1, j+1)[k] * kernel[8];
+					if(temp_result < 0)
+						temp_result = 0;
+					else if (temp_result > 255)
+						temp_result = 255;
+					result(i, j)[k] = temp_result;
+				}
 			}
 		}
 		tmp = result.clone();

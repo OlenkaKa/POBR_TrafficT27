@@ -20,6 +20,8 @@ public:
 	int getSize() const;
 	int getCircuit() const;
 	double getM1() const;
+	double getM2() const;
+	double getM3() const;
 	double getM7() const;
 	double getW3() const;
 	cv::Point getCenter() const;
@@ -31,7 +33,7 @@ public:
 
 	void drawOnImage(cv::Mat& image, const cv::Scalar& color);
 
-	static void generateObjects(const cv::Mat& image, std::vector<Object>& objects,
+	static void generateObjects(const cv::Mat& image, std::list<Object>& objects,
 			int minSize = 0, int maxSize = INT_MAX);
 
 	friend std::ostream& operator<< (std::ostream& os, const Object& obj);
@@ -51,13 +53,7 @@ private:
 	double M1_;
 	double M2_;
 	double M3_;
-	double M4_;
-	double M5_;
-	double M6_;
 	double M7_;
-	double M8_;
-	double M9_;
-	double M10_;
 	double W3_;
 };
 

@@ -13,13 +13,13 @@
 #include "Common.h"
 
 // Label - type used to index segments
-typedef cv::Vec3s Label;
-const int LABEL_TYPE = CV_16UC3;
-const int LABEL_MAX_TYPE_VALUE = SHRT_MAX - 1;
+typedef cv::Vec3b Label;
+const int LABEL_TYPE = CV_8UC3;
+const int LABEL_MAX_TYPE_VALUE = 255;//USHRT_MAX - 1;
 
-const Label BACKGROUND = BLACK_VEC;
+const Label BACKGROUND = Label(0, 0, 0);
 const Label FIRST_LABEL = Label(1, 0, 0);
-const Label LAST_LABEL = WHITE_VEC;
+const Label LAST_LABEL = Label(LABEL_MAX_TYPE_VALUE, LABEL_MAX_TYPE_VALUE, LABEL_MAX_TYPE_VALUE);
 
 // generate next Label
 Label nextLabel(const Label& lab);
