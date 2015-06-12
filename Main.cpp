@@ -1,6 +1,7 @@
 #include <opencv2/opencv.hpp>
 
 #include "TrafficT27.h"
+#include "Common.h"
 
 using namespace cv;
 using namespace std;

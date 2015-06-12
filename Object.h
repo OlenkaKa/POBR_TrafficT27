@@ -10,7 +10,7 @@
 
 #include <opencv2/opencv.hpp>
 
-const int GEOMETRIC_MOMENTS = 3;
+const int GEOMETRIC_MOMENTS = 4;
 
 class Object
 {
@@ -37,7 +37,7 @@ public:
 	friend std::ostream& operator<< (std::ostream& os, const Object& obj);
 
 private:
-	long long calculateGeometricMoment(int i, int j, int powI, int powJ);
+	long long calculateGeometricMoment(int x, int y, int i, int j);
 
 	// object localization
 	cv::Point minPoint_;
@@ -49,7 +49,15 @@ private:
 	// coefficients
 	int L_;
 	double M1_;
+	double M2_;
+	double M3_;
+	double M4_;
+	double M5_;
+	double M6_;
 	double M7_;
+	double M8_;
+	double M9_;
+	double M10_;
 	double W3_;
 };
 

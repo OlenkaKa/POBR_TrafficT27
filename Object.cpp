@@ -70,12 +70,18 @@ void Object::addPoint(int x, int y, bool circuit) {
 }
 
 void Object::extractFeatures() {
-	long double M02, M20, M11;
+	long double M11, M02, M20, M12, M21, M03, M30;
+	Point center = getCenter();
 	M11 = m_[1][1] - m_[1][0] * m_[0][1] / m_[0][0];
-	M20 = m_[2][0] - pow(m_[1][0], 2) / m_[0][0];
 	M02 = m_[0][2] - pow(m_[0][1], 2) / m_[0][0];
+	M20 = m_[2][0] - pow(m_[1][0], 2) / m_[0][0];
+	M12 = m_[1][2] - 2 * m_[1][1] * center.y - m_[0][2] * center.x + 2 * m_[1][0] * pow(center.y, 2);
+	M21 = m_[2][1] - 2 * m_[1][1] * center.x - m_[2][0] * center.y + 2 * m_[0][1] * pow(center.x, 2);
+	M03 = m_[0][3] - 3 * m_[0][2] * center.y + 2 * m_[0][1] * pow(center.y, 2);
+	M30 = m_[3][0] - 3 * m_[2][0] * center.x + 2 * m_[1][0] * pow(center.x, 2);
 
 	M1_ = (M20 + M02) / pow(m_[0][0], 2);
+	M2_ = (pow(M20 - M02, 2) + 4 * pow(M11, 2)) / pow(m_[0][0], 4);
 	M7_ = (M20 * M02 - pow(M11, 2)) / pow(m_[0][0], 4);
 
 	W3_ = (L_ / (2 * sqrt(M_PI * m_[0][0]))) - 1;

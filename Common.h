@@ -29,6 +29,7 @@ cv::Mat erode(const cv::Mat& image, int iterations);
 cv::Mat morphologyClose(const cv::Mat& image, int iterations);
 cv::Mat morphologyOpen(const cv::Mat& image, int iterations);
 
+cv::Mat sharpenFilter(const cv::Mat& image, int iterations);
 cv::Mat medianFilter(const cv::Mat& image, int iterations);
 
 template<class T>

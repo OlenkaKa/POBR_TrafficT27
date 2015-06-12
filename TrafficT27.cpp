@@ -53,6 +53,38 @@ void filterObjects(vector<Object>& objects, const ShapeParameters& params) {
 	}
 }
 
+void mergeAllObjects(vector<Object>& back, vector<Object>& circle,
+		vector<Object>& girl, vector<Object>& stick, vector<Object>& result) {
+	for(auto b = back.begin(); b != back.end(); ++b) {
+		bool isCircle = false, isStick = false, isGirl = false;
+		for(auto s = stick.begin(); s != stick.end(); ++s)
+			if(canMergeObjects((*b), (*s), BACKGROUND_STICK_REL)) {
+				isStick = true;
+				break;
+			}
+		for(auto c = circle.begin(); c != circle.end(); ++c)
+			if(canMergeObjects((*b), (*c), BACKGROUND_CIRCLE_REL)) {
+				isCircle = true;
+				break;
+			}
+		for(auto g = girl.begin(); g != girl.end(); ++g)
+			if(canMergeObjects((*b), (*g), BACKGROUND_GIRL_REL)) {
+				isGirl = true;
+				break;
+			}
+		if(isStick && isCircle && isGirl)
+			result.push_back(*b);
+	}
+}
+
+bool canMergeObjects(const Object& o1, const Object& o2, const RelationParameters& params) {
+	double size = o1.getSize() / o2.getSize();
+	Point diff = (o1.getCenter() - o2.getCenter());
+	if(size < params.minSizeRelation || size > params.maxSizeRelation)
+		return false;
+	return true;
+}
+
 Mat findTrafficT27(const Mat& inputImage)
 {
 	cout << "Recognition starting...\n";
@@ -65,7 +97,7 @@ Mat findTrafficT27(const Mat& inputImage)
 	findElement(image.clone(), backObj, BACKGROUND_PARAMS);
 
 	cout << "Finding red circles...\n";
-	//findElement(image.clone(), circleObj, CIRCLE_PARAMS);
+	findElement(image.clone(), circleObj, CIRCLE_PARAMS);
 
 	cout << "Finding black girls...\n";
 	//findElement(image.clone(), girlObj, GIRL_PARAMS);
@@ -74,40 +106,15 @@ Mat findTrafficT27(const Mat& inputImage)
 	//findElement(image.clone(), stickObj, STICK_PARAMS);
 
 	cout << "Merging results...\n";
-	// TODO: merge objects
+	vector<Object> result;
+	//mergeAllObjects(backObj, circleObj, girlObj, stickObj, result);
 
 	cout << "Drawing result...\n";
 	Mat outputImage = inputImage.clone();
-
-	/*
-	Mat outputImage = selectColor(image, BACKGROUND_PARAMS.minHSV, BACKGROUND_PARAMS.maxHSV);
-	outputImage = morphologyOpen(outputImage, BACKGROUND_PARAMS.morphologyIter);
-	outputImage = morphologyClose(outputImage, BACKGROUND_PARAMS.morphologyIter);
-	*/
-	/*
-	Mat outputImage = selectColor(image, CIRCLE_PARAMS.minHSV, CIRCLE_PARAMS.maxHSV);
-	outputImage = morphologyOpen(outputImage, CIRCLE_PARAMS.morphologyIter);
-	outputImage = morphologyClose(outputImage, CIRCLE_PARAMS.morphologyIter);
-	*/
-	/*
-	Mat outputImage = selectColor(image, GIRL_PARAMS.minHSV, GIRL_PARAMS.maxHSV);
-	outputImage = morphologyOpen(outputImage, GIRL_PARAMS.morphologyIter);
-	outputImage = morphologyClose(outputImage, GIRL_PARAMS.morphologyIter);
-	*/
-	/*
-	Mat outputImage = selectColor(image, STICK_PARAMS.minHSV, STICK_PARAMS.maxHSV);
-	outputImage = morphologyOpen(outputImage, STICK_PARAMS.morphologyIter);
-	outputImage = morphologyClose(outputImage, STICK_PARAMS.morphologyIter);
-	*/
-
 	for(auto it = backObj.begin(); it != backObj.end(); ++it)
-		(*it).drawOnImage(outputImage, Scalar(255, 0, 0));
-	for(auto it = circleObj.begin(); it != circleObj.end(); ++it)
 		(*it).drawOnImage(outputImage, Scalar(0, 255, 0));
-	for(auto it = girlObj.begin(); it != girlObj.end(); ++it)
-		(*it).drawOnImage(outputImage, Scalar(0, 0, 255));
-	for(auto it = stickObj.begin(); it != stickObj.end(); ++it)
-		(*it).drawOnImage(outputImage, Scalar(0, 255, 255));
+	for(auto it = circleObj.begin(); it != circleObj.end(); ++it)
+		(*it).drawOnImage(outputImage, Scalar(255, 255, 0));
 
 	cout << "Recognition finished.\n";
 	return outputImage;

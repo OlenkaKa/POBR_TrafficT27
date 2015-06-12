@@ -134,6 +134,33 @@ Mat morphologyOpen(const Mat& image, int iterations) {
 	return dilate(erode(image, iterations), iterations);
 }
 
+Mat sharpenFilter(const Mat& image_, int iterations) {
+	Mat result_(image_.rows, image_.cols, CV_8UC3);
+	Mat_<Vec3b> image = image_;
+	Mat_<Vec3b> result = result_;
+	Mat_<Vec3b> tmp = image;
+	static const double kernel[9] = {0, -0.5, 0, -0.5, 3, -0.5, 0, -0.5, 0};
+
+	for(int iter = 0; iter < iterations; ++iter) {
+		for(int i = 1; i < result.rows-1; ++i) {
+			for(int j = 1; j < result.cols-1; ++j) {
+				result(i, j) =  tmp(i-1, j-1) * kernel[0] + tmp(i-1, j) * kernel[1] +
+						tmp(i-1, j+1) * kernel[2] + tmp(i, j-1) * kernel[3] +
+						tmp(i, j) * kernel[4] + tmp(i, j+1) * kernel[5] +
+						tmp(i+1, j-1) * kernel[6] + tmp(i+1, j) * kernel[7] +
+						tmp(i+1, j+1) * kernel[8];
+				for(int k = 0; k < 3; ++k)
+					if(result(i, j)[k] < 0)
+						result(i, j)[k] = 0;
+					else if (result(i, j)[k] > 255)
+						result(i, j)[k] = 255;
+			}
+		}
+		tmp = result.clone();
+	}
+	return result;
+}
+
 Mat medianFilter(const Mat& image_, int iterations) {
 	Mat result_(image_.rows, image_.cols, CV_8UC3);
 	Mat_<Vec3b> image = image_;
