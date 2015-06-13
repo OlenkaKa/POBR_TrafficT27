@@ -83,15 +83,12 @@ const Parameters STICK_PARAMS(
 		-1000, 1000);
 
 const RelationParameters BACKGROUND_CIRCLE_REL(
-		0, 0,
-		cv::Vec2d(0, 0), cv::Vec2d(0, 0));
+		0.002, 0.035);
 
 const RelationParameters BACKGROUND_GIRL_REL(
-		0.1, 0.25,
-		cv::Vec2d(0, 0), cv::Vec2d(0, 0));
+		0.1, 0.25);
 
 const RelationParameters BACKGROUND_STICK_REL(
-		0, 0,
-		cv::Vec2d(0, 0), cv::Vec2d(0, 0));
+		0.01, 0.04);
 
 #endif /* CONSTS_H_ */

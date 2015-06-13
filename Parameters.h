@@ -45,13 +45,8 @@ struct RelationParameters
 	double minSizeRelation;
 	double maxSizeRelation;
 
-	cv::Vec2d minVector;
-	cv::Vec2d maxVector;
-
-	RelationParameters(double minSize_, double maxSize_,
-			const cv::Vec2d& minVec_, const cv::Vec2d& maxVec_):
-				minSizeRelation(minSize_), maxSizeRelation(maxSize_),
-				minVector(minVec_), maxVector(maxVec_) {
+	RelationParameters(double minSize_, double maxSize_):
+				minSizeRelation(minSize_), maxSizeRelation(maxSize_) {
 	}
 };
 

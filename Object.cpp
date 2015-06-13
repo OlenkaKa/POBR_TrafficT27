@@ -15,17 +15,17 @@ using namespace cv;
 using namespace std;
 
 Object::Object(): minPoint_(INT_MAX, INT_MAX), maxPoint_(0, 0),
-		L_(0), M1_(0), M2_(0), M3_(0), M7_(0), W3_(0) {
+		L_(0), M1_(0), M2_(0), M7_(0), W3_(0) {
 	for(int i = 0; i < GEOMETRIC_MOMENTS; ++i)
 		for(int j = 0; j < GEOMETRIC_MOMENTS; ++j)
 			m_[i][j] = 0;
 }
 
-int Object::getSize() const {
+long Object::getSize() const {
 	return m_[0][0];
 }
 
-int Object::getCircuit() const {
+long Object::getCircuit() const {
 	return L_;
 }
 
@@ -35,10 +35,6 @@ double Object::getM1() const {
 
 double Object::getM2() const {
 	return M2_;
-}
-
-double Object::getM3() const {
-	return M3_;
 }
 
 double Object::getM7() const {
@@ -90,9 +86,6 @@ void Object::extractFeatures() {
 
 	M1_ = (M20 + M02) / pow(m_[0][0], 2);
 	M2_ = (pow(M20 - M02, 2) + 4 * pow(M11, 2)) / pow(m_[0][0], 4);
-	// dodatkowe M nie działa ...
-	//M3_ = (pow(M30 - 3 * M12, 2) + pow(3 * M21 - M03, 2)) / pow(m_[0][0], 5);
-	//M3_ = (pow(M30 + M12, 2) + pow(M21 + M03, 2)) / pow(m_[0][0], 5);
 	M7_ = (M20 * M02 - pow(M11, 2)) / pow(m_[0][0], 4);
 
 	W3_ = (L_ / (2 * sqrt(M_PI * m_[0][0]))) - 1;
@@ -100,12 +93,6 @@ void Object::extractFeatures() {
 
 void Object::drawOnImage(cv::Mat& image, const cv::Scalar& color) {
 	rectangle(image, minPoint_, maxPoint_, color, 5);
-	/*
-	Mat_<Vec3b> image_ = image;
-	for(int i = minPoint_.y; i < maxPoint_.y; ++i)
-		for(int j = minPoint_.x; j < maxPoint_.x; ++j)
-			image_(i, j) = WHITE_VEC - image_(i, j);
-	*/
 }
 
 long long Object::calculateGeometricMoment(int x, int y, int i, int j) {

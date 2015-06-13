@@ -15,7 +15,7 @@
 // Label - type used to index segments
 typedef cv::Vec3b Label;
 const int LABEL_TYPE = CV_8UC3;
-const int LABEL_MAX_TYPE_VALUE = 255;//USHRT_MAX - 1;
+const int LABEL_MAX_TYPE_VALUE = 255;
 
 const Label BACKGROUND = Label(0, 0, 0);
 const Label FIRST_LABEL = Label(1, 0, 0);

@@ -17,11 +17,10 @@ class Object
 public:
 	Object();
 
-	int getSize() const;
-	int getCircuit() const;
+	long getSize() const;
+	long getCircuit() const;
 	double getM1() const;
 	double getM2() const;
-	double getM3() const;
 	double getM7() const;
 	double getW3() const;
 	cv::Point getCenter() const;
@@ -52,7 +51,6 @@ private:
 	int L_;
 	double M1_;
 	double M2_;
-	double M3_;
 	double M7_;
 	double W3_;
 };

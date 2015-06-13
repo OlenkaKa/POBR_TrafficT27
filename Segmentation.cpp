@@ -18,8 +18,6 @@ Label nextLabel(const Label& lab) {
 		++result[1];
 	else if(lab[2] < LABEL_MAX_TYPE_VALUE)
 		++result[2];
-	else
-		cerr << "Segmentation error: to many labels!" << endl;
 	return result;
 }
 
