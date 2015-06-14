@@ -24,8 +24,8 @@ void findElement(const cv::Mat& inputImage, std::list<Object>& objects, const Pa
 
 	cout << "  Feature extraction...\n";
 	Object::generateObjects(segImage, objects, params.minSegmentSize, params.maxSegmentSize);
-	for(auto it = objects.begin(); it != objects.end(); ++it)
-		cout << (*it) << endl;
+	//for(auto it = objects.begin(); it != objects.end(); ++it)
+		//cout << (*it) << endl;
 
 	cout << "  Objects filtering...\n";
 	filterObjects(objects, params.shapeParams);
@@ -56,26 +56,37 @@ void filterObjects(list<Object>& objects, const ShapeParameters& params) {
 }
 
 void mergeAllObjects(list<Object>& back, list<Object>& circle,
-		list<Object>& girl, list<Object>& stick, list<Object>& result) {
+		list<Object>& girl, list<Object>& stick,
+		list<Object>& resBack, list<Object>& resCircle,
+		list<Object>& resGirl, list<Object>& resStick) {
+
 	for(auto b = back.begin(); b != back.end(); ++b) {
+		list<Object>::const_iterator ci, gi, si;
 		bool isCircle = false, isStick = false, isGirl = false;
 		for(auto s = stick.begin(); s != stick.end(); ++s)
 			if(canMergeObjects((*s), (*b), BACKGROUND_STICK_REL)) {
 				isStick = true;
+				si = s;
 				break;
 			}
 		for(auto c = circle.begin(); c != circle.end(); ++c)
 			if(canMergeObjects((*c), (*b), BACKGROUND_CIRCLE_REL)) {
 				isCircle = true;
+				ci = c;
 				break;
 			}
 		for(auto g = girl.begin(); g != girl.end(); ++g)
 			if(canMergeObjects((*g), (*b), BACKGROUND_GIRL_REL)) {
 				isGirl = true;
+				gi = g;
 				break;
 			}
-		if(isStick && isCircle && isGirl)
-			result.push_back(*b);
+		if(isStick && isCircle && isGirl) {
+			resBack.push_back(*b);
+			resCircle.push_back(*ci);
+			resGirl.push_back(*gi);
+			resStick.push_back(*si);
+		}
 	}
 }
 
@@ -112,12 +123,31 @@ Mat findTrafficT27(const Mat& inputImage)
 	findElement(image.clone(), stickObj, STICK_PARAMS);
 
 	cout << "Merging results...\n";
-	list<Object> result;
-	mergeAllObjects(backObj, circleObj, girlObj, stickObj, result);
+	list<Object> resBack, resCircle, resGirl, resStrick;
+	mergeAllObjects(backObj, circleObj, girlObj, stickObj,
+			resBack, resCircle, resGirl, resStrick);
 
 	cout << "Drawing result...\n";
 	Mat outputImage = inputImage.clone();
-	for(auto it = result.begin(); it != result.end(); ++it)
+
+	// draw all objects
+	for(auto it = circleObj.begin(); it != circleObj.end(); ++it)
+		(*it).drawOnImage(outputImage, Scalar(0, 0, 255));
+	for(auto it = girlObj.begin(); it != girlObj.end(); ++it)
+		(*it).drawOnImage(outputImage, Scalar(255, 255, 255));
+	for(auto it = stickObj.begin(); it != stickObj.end(); ++it)
+		(*it).drawOnImage(outputImage, Scalar(255, 0, 0));
+	for(auto it = backObj.begin(); it != backObj.end(); ++it)
+		(*it).drawOnImage(outputImage, Scalar(0, 255, 0));
+
+	// draw choosen objects
+	for(auto it = resCircle.begin(); it != resCircle.end(); ++it)
+		(*it).drawOnImage(outputImage, Scalar(255, 0, 255));
+	for(auto it = resGirl.begin(); it != resGirl.end(); ++it)
+		(*it).drawOnImage(outputImage, Scalar(255, 0, 255));
+	for(auto it = resStrick.begin(); it != resStrick.end(); ++it)
+		(*it).drawOnImage(outputImage, Scalar(255, 0, 255));
+	for(auto it = resBack.begin(); it != resBack.end(); ++it)
 		(*it).drawOnImage(outputImage, Scalar(255, 0, 255));
 
 	cout << "Recognition finished.\n";

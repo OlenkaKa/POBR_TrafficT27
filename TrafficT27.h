@@ -9,7 +9,9 @@
 void findElement(const cv::Mat& image, std::list<Object>& objects, const Parameters& params);
 void filterObjects(std::list<Object>& objects, const ShapeParameters& params);
 void mergeAllObjects(std::list<Object>& back, std::list<Object>& circle,
-		std::list<Object>& girl, std::list<Object>& stick, std::list<Object>& result);
+		std::list<Object>& girl, std::list<Object>& stick,
+		std::list<Object>& resBack, std::list<Object>& resCircle,
+		std::list<Object>& resGirl, std::list<Object>& resStick);
 bool canMergeObjects(const Object& o1, const Object& o2, const RelationParameters& params);
 
 cv::Mat findTrafficT27(const cv::Mat& image);

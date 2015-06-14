@@ -70,7 +70,7 @@ const Parameters STICK_PARAMS(
 		// Morphology iterations
 		0, 0,
 		// Segment size
-		0, 10000,
+		0, 20000,
 		// M1
 		0.6, 0.8,
 		// M2

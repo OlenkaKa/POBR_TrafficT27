@@ -18,6 +18,8 @@ Label nextLabel(const Label& lab) {
 		++result[1];
 	else if(lab[2] < LABEL_MAX_TYPE_VALUE)
 		++result[2];
+	else
+		cout << "Segmentation warning: Too many labels." << endl;
 	return result;
 }
 
